@@ -5,41 +5,72 @@ output:
     keep_md: true
 ---
 
+
 ## Loading and preprocessing the data
-```{r}
+
+```r
 data <- read.csv("activity.csv")
 total.step.day <- tapply(data$steps, data$date, sum, na.rm=TRUE)
 hist(total.step.day, xlab="Total steps per day")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 mean(total.step.day, na.rm=TRUE)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(total.step.day, na.rm=TRUE)
 ```
 
+```
+## [1] 10395
+```
+
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 mean.int.5 <- tapply(data$steps, data$interval, mean, na.rm=TRUE)
 plot(mean.int.5 ~ unique(data$interval), type="l",
      xlab="Minutes", ylab="Mean steps per 5 min")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 
 The interval with the highest average number of steps:
-```{r}
+
+```r
 names(mean.int.5)[mean.int.5 == max(mean.int.5)]
+```
+
+```
+## [1] "835"
 ```
 
 
 ## Imputing missing values
 Number of missing values in the dataset:
-```{r}
+
+```r
 summary(is.na(data$steps))[3]
 ```
+
+```
+## TRUE 
+## 2304
+```
 Imputation of missing data with mean values by 5 min interval
-```{r}
+
+```r
         # Calculate mean steps per interval
 mean.steps.int <- tapply(data$steps, data$interval, mean, na.rm=TRUE)
 names(mean.steps.int) <- unique(data$interval)
@@ -51,16 +82,34 @@ steps.imput <- apply(data[,c(1,3)], 1, function(x){
         # Make datasets with imputed NAs
 data.imput <- data ; data.imput$steps <- steps.imput
 ```
-```{r}
+
+```r
 total.step.day.2 <- tapply(data.imput$steps, data.imput$date, sum)
 hist(total.step.day.2, xlab="Total steps per day")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+```r
 mean(total.step.day.2)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(total.step.day.2)
+```
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 data.imput$weekdays <- weekdays(as.Date(data.imput$date))
 attach(data.imput)
 par(mfrow=c(2,4))
@@ -73,3 +122,5 @@ for (day in unique(weekdays)) {
 }
 detach(data.imput)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
